@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'package:save_password/config/size_config.dart';
+import 'package:save_password/config/style.dart';
+import 'package:save_password/config/textStyle.dart';
 import 'package:save_password/providers/auth_provider.dart';
 import 'package:save_password/views/home_screen.dart';
-import 'package:save_password/widgets/login_button.dart';
-import 'package:save_password/widgets/stagger_animation_login.dart';
+import 'package:save_password/widgets/primary_button.dart';
 class SignIn extends StatefulWidget {
   const SignIn({Key? key}) : super(key: key);
 
@@ -40,7 +41,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin{
     var hm=SizeConfig.heightMultiplier;
     var wm=SizeConfig.widthMultiplier;
     var tm=SizeConfig.textMultiplier;
-    var provider= context.read<AuthProvider>();
+    // var provider= context.read<AuthProvider>();
     var Dprovider=context.watch<AuthProvider>();
     timeDilation = 1;
     return  StreamBuilder(
@@ -53,37 +54,105 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin{
         }else if(snapshot.hasData) {
           return const HomeScreen();
          }else {
-          return !Dprovider.isLoading? Scaffold(
-            body: Container(
-              decoration: const BoxDecoration(
-                  image: DecorationImage(
-                      image: AssetImage("assets/icons/login_bg.jpg"),
-                      fit: BoxFit.fill)),
-              child: ListView(
-                padding: EdgeInsets.zero,
-                children: [
-                  Stack(
-                    alignment: Alignment.bottomCenter,
-                    children: [
-                      Column(
-                        children:  [
-                          Padding(
-                            padding: EdgeInsets.only(top: hm*6, bottom: hm*5),
-                            child: Text("Save Passwords",style: TextStyle(fontWeight: FontWeight.bold,fontSize: tm*4,color: Colors.white),)
+          return !Dprovider.isLoading?
+          GestureDetector(
+            onTap: () {
+              FocusScopeNode currentFocus = FocusScope.of(context);
+              if (!currentFocus.hasPrimaryFocus) {
+                currentFocus.unfocus();
+              }
+            },
+            child: Scaffold(
+              backgroundColor: Colors.white,
+              appBar: AppBar(
+                toolbarHeight: hm* 60,
+                elevation: 0,
+                automaticallyImplyLeading: false,
+                backgroundColor: Colors.white,
+                flexibleSpace: Center(
+                  child: Container(
+                    width: double.maxFinite,
+                    height: hm * 60,
+                    margin: EdgeInsets.only(bottom: hm*3.5),
+                    decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.2),
+                            spreadRadius: wm * 0.5,
+                            blurRadius: wm * 1,
+                            offset: Offset(
+                                wm * 0.0, hm * 0.5), // changes position of shadow
                           ),
-                          SizedBox(height: hm*89,)
                         ],
+                        image: const DecorationImage(
+                            image: AssetImage('assets/icons/login_bg.jpg'),
+                            fit: BoxFit.fill),
+                        borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(wm * 10),
+                            bottomRight: Radius.circular(wm * 10))),
+                  ),
+                ),
+              ),
+              body: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Text('Login',style: tS('NunitoBold', tm*3, FontWeight.bold, Colors.black),),
+                    SizedBox(height: hm*1.8,),
+                    Text('login to continue',style: tS('NunitoRegular', tm*2.5, FontWeight.normal, Colors.black),),
+                    Padding(
+                      padding:  EdgeInsets.fromLTRB(wm*9,hm*1,wm*9,0),
+                      child: Form(
+                        child: Column(
+                          children: [
+                            SizedBox(height: hm*3,),
+
+                            SizedBox(height: hm*4,),
+                            /** Login button**/
+                            Padding(
+                              padding:  EdgeInsets.symmetric(horizontal: wm*4),
+                              child: primaryButton(height: hm*5.5, borderRadius: BorderRadius.circular(wm*4),width: double.maxFinite, widget:
+                              Center(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Center(
+                                      child: SizedBox(
+                                        width: wm*7,
+                                        height: wm*7,
+                                        child: const Image(
+                                          image: AssetImage('assets/icons/google.png',),
+                                          fit: BoxFit.fill,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(width: wm*2,),
+                                    Text('Login',style: tS('NunitoRegular', tm*2.2, FontWeight.bold, Colors.white),),
+                                  ],
+                                ),
+                              ),function: (){
+                              }),
+                            ),
+                            SizedBox(height: hm*2.2,),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                GestureDetector(
+                                    onTap: (){
+                                    },
+                                    child: Text('Forgot Password?',style: tS('NunitoRegular', tm*1.8, FontWeight.w400, AppStyle.primary,textDecoration: TextDecoration.underline))),
+                              ],
+                            ),
+                            /** End Login button**/
+
+                          ],
+                        ),
                       ),
-                      StaggerAnimationLogin(
-                          controller:
-                          _animationController // _animationController.view
-                      )
-                    ],
-                  )
-                ],
+                    )
+                  ],
+                ),
               ),
             ),
-          ) : const CircularProgressIndicator();
+          ): const CircularProgressIndicator();
         }
         }
     );
