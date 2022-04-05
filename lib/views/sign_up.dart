@@ -16,23 +16,26 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin{
-  late AnimationController _animationController;
+  //late AnimationController _animationController;
 
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(vsync: this, duration: const Duration(seconds: 2));
-    _animationController.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => HomeScreen()));
-      }
-    });
+    // _animationController = AnimationController(vsync: this, duration: const Duration(seconds: 2));
+    // _animationController.addStatusListener((status) {
+    //   if (status == AnimationStatus.completed) {
+    //     Navigator.of(context).pushReplacement(
+    //         MaterialPageRoute(builder: (context) => HomeScreen()));
+    //   }
+    // });
+    var auth=FirebaseAuth.instance.currentUser;
+    print("auth");
+    print(auth?.uid);
   }
 
   @override
   void dispose() {
-    _animationController.dispose();
+ //   _animationController.dispose();
     super.dispose();
   }
 
@@ -41,9 +44,10 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin{
     var hm=SizeConfig.heightMultiplier;
     var wm=SizeConfig.widthMultiplier;
     var tm=SizeConfig.textMultiplier;
-    // var provider= context.read<AuthProvider>();
+     var provider= context.read<AuthProvider>();
     var Dprovider=context.watch<AuthProvider>();
     timeDilation = 1;
+
     return  StreamBuilder(
       stream:  FirebaseAuth.instance.authStateChanges(),
       builder: (context,snapshot) {
@@ -129,7 +133,11 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin{
                                     Text('Login',style: tS('NunitoRegular', tm*2.2, FontWeight.bold, Colors.white),),
                                   ],
                                 ),
-                              ),function: (){
+                              ),function: () async {
+                               if(await provider.googleLogin()){
+                                 print("login!!!");
+                               //  Navigator.pushReplacement(context,  MaterialPageRoute(builder: (BuildContext context) => HomeScreen()));
+                               }
                               }),
                             ),
                             SizedBox(height: hm*2.2,),
