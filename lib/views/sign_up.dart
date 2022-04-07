@@ -6,6 +6,7 @@ import 'package:save_password/config/size_config.dart';
 import 'package:save_password/config/style.dart';
 import 'package:save_password/config/textStyle.dart';
 import 'package:save_password/providers/auth_provider.dart';
+import 'package:save_password/views/add_password.dart';
 import 'package:save_password/views/home_screen.dart';
 import 'package:save_password/widgets/primary_button.dart';
 class SignIn extends StatefulWidget {
@@ -56,7 +57,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin{
         } else if(snapshot.hasError) {
           return const Center(child: Text('Something went wrong!'));
         }else if(snapshot.hasData) {
-          return const HomeScreen();
+          return const AddPassword();
          }else {
           return !Dprovider.isLoading?
           GestureDetector(
@@ -69,7 +70,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin{
             child: Scaffold(
               backgroundColor: Colors.white,
               appBar: AppBar(
-                toolbarHeight: hm* 60,
+                toolbarHeight: hm* 50,
                 elevation: 0,
                 automaticallyImplyLeading: false,
                 backgroundColor: Colors.white,

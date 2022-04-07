@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -37,16 +39,12 @@ Future<bool> googleLogin() async {
 }
 addUser(User? user) async {
   if(user!=null && user.uid!=null){
-    print("here");
     final docUser=FirebaseFirestore.instance.collection("users");
-    print("here.");
     final newUser=UserModel(id: user.uid,email: user.email,name: user.displayName,image: user.photoURL);
-    print(newUser.toJson());
     await docUser.doc(user.uid).set(newUser.toJson()).whenComplete(() => print("complete"));
   }
-
-
 }
+
 Future<bool> googleLogout() async {
  var logout= await googleSignIn.disconnect();
  var authLogout=await FirebaseAuth.instance.signOut();
