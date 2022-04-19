@@ -1,15 +1,13 @@
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'package:save_password/config/size_config.dart';
-import 'package:save_password/config/style.dart';
 import 'package:save_password/config/textStyle.dart';
 import 'package:save_password/providers/auth_provider.dart';
 import 'package:save_password/views/home_screen.dart';
+import 'package:save_password/widgets/load.dart';
 import 'package:save_password/widgets/primary_button.dart';
-import 'package:save_password/widgets/text_field.dart';
-
 import '../widgets/rounded_text_field.dart';
 class AddPassword extends StatefulWidget {
   const AddPassword({Key? key}) : super(key: key);
@@ -20,7 +18,8 @@ class AddPassword extends StatefulWidget {
 
 class _SignInState extends State<AddPassword> {
   TextEditingController passwordController = TextEditingController();
-
+  TextEditingController confirmPasswordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
   @override
   void initState() {
     super.initState();
@@ -40,9 +39,7 @@ class _SignInState extends State<AddPassword> {
     var provider= context.read<AuthProvider>();
     var Dprovider=context.watch<AuthProvider>();
     timeDilation = 1;
-
-    return
-            GestureDetector(
+    return GestureDetector(
               onTap: () {
                 FocusScopeNode currentFocus = FocusScope.of(context);
                 if (!currentFocus.hasPrimaryFocus) {
@@ -89,24 +86,14 @@ class _SignInState extends State<AddPassword> {
                       Padding(
                         padding:  EdgeInsets.fromLTRB(wm*9,hm*1,wm*9,0),
                         child: Form(
+                          key: _formKey,
                           child: Column(
                             children: [
                               SizedBox(height: hm*3,),
                               /** Login button**/
                               roundedTextField(context,wm,hm,tm,passwordController,"Password"),
                               SizedBox(height: hm*4,),
-                              Text("OR",style: tS('NunitoRegular', tm*2.4, FontWeight.w400, Colors.black.withOpacity(0.43)),),
-                              SizedBox(height: hm*3,),
-                              Center(
-                                child: SizedBox(
-                                  width: wm*10,
-                                  height: wm*10,
-                                  child: const Image(
-                                    image: AssetImage('assets/icons/fingerprint.png',),
-                                    fit: BoxFit.fill,
-                                  ),
-                                ),
-                              ),
+                              roundedTextField(context,wm,hm,tm,confirmPasswordController,"Confirm password",oldPassword:passwordController.value.text ),
                               SizedBox(height: hm*4,),
                               Padding(
                                 padding:  EdgeInsets.symmetric(horizontal: wm*4),
@@ -114,12 +101,17 @@ class _SignInState extends State<AddPassword> {
                                 Center(
                                   child: Text('Continue',style: tS('NunitoRegular', tm*2.2, FontWeight.bold, Colors.white),),
                                 ),function: () async {
-
+                                   if(_formKey.currentState!=null &&_formKey.currentState!.validate()){
+                                    if(await provider.addPassword(passwordController.text)){
+                                      Navigator.pushReplacement(context,  MaterialPageRoute(builder: (BuildContext context) => const HomeScreen()));
+                                    }else{
+                                      Load.showMyDialog(context, "An error has occurred please try again",title: "Error");
+                                    }
+                                   }
                                 }),
                               ),
                               SizedBox(height: hm*2.2,),
                               /** End Login button**/
-
                             ],
                           ),
                         ),
@@ -129,7 +121,6 @@ class _SignInState extends State<AddPassword> {
                 ),
               ),
             );
-
   }
 }
 

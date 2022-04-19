@@ -9,6 +9,8 @@ import 'package:save_password/providers/auth_provider.dart';
 import 'package:save_password/views/add_password.dart';
 import 'package:save_password/views/home_screen.dart';
 import 'package:save_password/widgets/primary_button.dart';
+
+import '../widgets/load.dart';
 class SignIn extends StatefulWidget {
   const SignIn({Key? key}) : super(key: key);
 
@@ -49,16 +51,6 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin{
     var Dprovider=context.watch<AuthProvider>();
     timeDilation = 1;
 
-    return  StreamBuilder(
-      stream:  FirebaseAuth.instance.authStateChanges(),
-      builder: (context,snapshot) {
-        if(snapshot.connectionState==ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator(),);
-        } else if(snapshot.hasError) {
-          return const Center(child: Text('Something went wrong!'));
-        }else if(snapshot.hasData) {
-          return const AddPassword();
-         }else {
           return !Dprovider.isLoading?
           GestureDetector(
             onTap: () {
@@ -101,17 +93,17 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin{
               body: SingleChildScrollView(
                 child: Column(
                   children: [
+                    SizedBox(height: hm*2,),
                     Text('Login',style: tS('NunitoBold', tm*3, FontWeight.bold, Colors.black),),
-                    SizedBox(height: hm*1.8,),
+                    SizedBox(height: hm*2.2,),
                     Text('login to continue',style: tS('NunitoRegular', tm*2.5, FontWeight.normal, Colors.black),),
                     Padding(
                       padding:  EdgeInsets.fromLTRB(wm*9,hm*1,wm*9,0),
                       child: Form(
                         child: Column(
                           children: [
-                            SizedBox(height: hm*3,),
 
-                            SizedBox(height: hm*4,),
+                            SizedBox(height: hm*12,),
                             /** Login button**/
                             Padding(
                               padding:  EdgeInsets.symmetric(horizontal: wm*4),
@@ -136,8 +128,9 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin{
                                 ),
                               ),function: () async {
                                if(await provider.googleLogin()){
-                                 print("login!!!");
-                               //  Navigator.pushReplacement(context,  MaterialPageRoute(builder: (BuildContext context) => HomeScreen()));
+                                 Navigator.pushReplacement(context,  MaterialPageRoute(builder: (BuildContext context) => const AddPassword()));
+                               }else{
+                                 Load.showMyDialog(context, "An error has occurred please try again",title: "Error");
                                }
                               }),
                             ),
@@ -162,9 +155,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin{
               ),
             ),
           ): const CircularProgressIndicator();
-        }
-        }
-    );
+
   }
 }
 

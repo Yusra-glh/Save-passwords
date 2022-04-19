@@ -5,6 +5,10 @@ Account _$AccountFromJson(Map<String, dynamic> json) {
     id: json['id'],
     password:json['password'],
     email: json['email'],
+    title: json['title'],
+    strength: json['strength'],
+    strengthValue: json['strengthValue'],
+    icon: json['icon'],
   );
 
 }

@@ -51,4 +51,30 @@ Future<bool> googleLogout() async {
  notifyListeners();
  return true;
 }
+Future<bool> addPassword(String password) async {
+  try{
+    var auth= FirebaseAuth.instance.currentUser;
+    if(auth!=null){
+      await auth.updatePassword(password);
+      if(await updateUser(auth,password)){
+        return true;
+      }
+      return false;
+    }
+    return false;
+  }catch(e){
+    print(e);
+    return false;
+  }
+}
+  Future<bool> updateUser(User? user,String? password) async {
+    if(user!=null && user.uid!=null){
+      final docUser=FirebaseFirestore.instance.collection("users");
+      final newUser=UserModel(id: user.uid,email: user.email,name: user.displayName,image: user.photoURL,password: password);
+      await docUser.doc(user.uid).update(newUser.toJson());
+      return true;
+    }else{
+      return false;
+    }
+  }
 }

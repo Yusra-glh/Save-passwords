@@ -6,6 +6,7 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) {
     image:json['image'],
     name: json['name'],
     email: json['email'],
+    password: json['password'],
     );
 
 }
