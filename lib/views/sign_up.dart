@@ -7,7 +7,6 @@ import 'package:save_password/config/style.dart';
 import 'package:save_password/config/textStyle.dart';
 import 'package:save_password/providers/auth_provider.dart';
 import 'package:save_password/views/add_password.dart';
-import 'package:save_password/views/home_screen.dart';
 import 'package:save_password/widgets/primary_button.dart';
 
 import '../widgets/load.dart';
@@ -50,7 +49,6 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin{
      var provider= context.read<AuthProvider>();
     var Dprovider=context.watch<AuthProvider>();
     timeDilation = 1;
-
           return !Dprovider.isLoading?
           GestureDetector(
             onTap: () {
@@ -127,10 +125,10 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin{
                                   ],
                                 ),
                               ),function: () async {
-                               if(await provider.googleLogin()){
+                               if(await provider.googleLogin(context)){
                                  Navigator.pushReplacement(context,  MaterialPageRoute(builder: (BuildContext context) => const AddPassword()));
                                }else{
-                                 Load.showMyDialog(context, "An error has occurred please try again",title: "Error");
+                                 
                                }
                               }),
                             ),

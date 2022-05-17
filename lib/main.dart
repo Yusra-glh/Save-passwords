@@ -6,6 +6,7 @@ import 'package:save_password/providers/account_provider.dart';
 import 'package:save_password/providers/auth_provider.dart';
 import 'package:save_password/views/home_screen.dart';
 import 'package:save_password/views/sign_up.dart';
+import 'package:save_password/views/wrapper.dart';
 import 'package:save_password/widgets/accounts_list.dart';
 
 Future<void> main() async {
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
-          home: const SignIn(),
+          home:  Wrapper(),
         );
       });
     });
