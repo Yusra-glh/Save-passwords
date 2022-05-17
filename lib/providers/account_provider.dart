@@ -39,7 +39,8 @@ class AccountProvider with ChangeNotifier {
           .doc(data.id)
           .set(data.toJson())
           .whenComplete(() => log("done"));
-      await getAccounts();
+      accounts = await getAccounts();
+      notifyListeners();
       return true;
     }
     return false;
@@ -56,7 +57,8 @@ class AccountProvider with ChangeNotifier {
           .doc(id)
           .update(data.toJson())
           .whenComplete(() => log("done"));
-      await getAccounts();
+      accounts = await getAccounts();
+      notifyListeners();
       return true;
     }
     return false;
@@ -73,21 +75,23 @@ class AccountProvider with ChangeNotifier {
           .doc(id)
           .delete()
           .whenComplete(() => log("done"));
-      await getAccounts();
+      accounts = await getAccounts();
+      notifyListeners();
       return true;
     }
     return false;
   }
 
   Future<List<Account>> getAccounts() async {
+    List<Account> result = [];
     final data = await service.getAccounts();
     for (var acc in data) {
-      var index = accounts.indexWhere((element) => element.id == acc.id);
+      var index = result.indexWhere((element) => element.id == acc.id);
       if (index == -1) {
-        accounts.add(Account.fromJson(acc.data()));
+        result.add(Account.fromJson(acc.data()));
         notifyListeners();
       }
     }
-    return accounts;
+    return result;
   }
 }

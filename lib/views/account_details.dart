@@ -9,19 +9,30 @@ import 'package:save_password/widgets/rounded_text_field.dart';
 
 import '../widgets/level_indicator.dart';
 
-class AccountDetails extends StatelessWidget {
+class AccountDetails extends StatefulWidget {
   final Account account;
   const AccountDetails({Key? key, required this.account}) : super(key: key);
 
   @override
+  State<AccountDetails> createState() => _AccountDetailsState();
+}
+
+class _AccountDetailsState extends State<AccountDetails> {
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+
+  @override
+  void initState() {
+    passwordController = TextEditingController(text: widget.account.password);
+    emailController = TextEditingController(text: widget.account.email);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    TextEditingController passwordController = TextEditingController();
-    TextEditingController emailController = TextEditingController();
     var hm = SizeConfig.heightMultiplier;
     var wm = SizeConfig.widthMultiplier;
     var tm = SizeConfig.textMultiplier;
-    passwordController.text = account.password ?? "";
-    emailController.text = account.email ?? "";
     final topContentText = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -30,7 +41,7 @@ class AccountDetails extends StatelessWidget {
             height: hm * 6,
             width: wm * 11,
             child: Image.asset(
-              account.icon ?? "assets/icons/key.png",
+              widget.account.icon ?? "assets/icons/key.png",
               fit: BoxFit.fill,
             )),
         const SizedBox(
@@ -39,7 +50,7 @@ class AccountDetails extends StatelessWidget {
         ),
         const SizedBox(height: 10.0),
         Text(
-          account.title ?? "",
+          widget.account.title ?? "",
           style: const TextStyle(color: Colors.white, fontSize: 45.0),
         ),
         const SizedBox(height: 30.0),
@@ -49,14 +60,14 @@ class AccountDetails extends StatelessWidget {
             Expanded(
                 flex: 3,
                 child: LevelIndicator(
-                  length: account.strength ?? 0.2,
+                  length: widget.account.strength ?? 0.2,
                 )),
             Expanded(
                 flex: 6,
                 child: Padding(
                     padding: const EdgeInsets.only(left: 10.0),
                     child: Text(
-                      account.strengthValue ?? "",
+                      widget.account.strengthValue ?? "",
                       style: const TextStyle(color: Colors.white),
                     ))),
           ],
@@ -127,10 +138,10 @@ class AccountDetails extends StatelessWidget {
                   email: emailController.text.trim(),
                   password: passwordController.text.trim(),
                 );
-                if (account.id != null &&
+                if (widget.account.id != null &&
                     await context
                         .read<AccountProvider>()
-                        .editAccount(account.id!, model)) {
+                        .editAccount(widget.account.id!, model)) {
                   Navigator.pop(context);
                 }
               }),
@@ -150,11 +161,10 @@ class AccountDetails extends StatelessWidget {
                 ),
               ),
               function: () async {
-                if (account.id != null &&
-                    await context
-                        .read<AccountProvider>()
-                        .deleteAccount(account.id!)) {
-                  Navigator.pop(context);
+                if (widget.account.id != null) {
+                  if (await context.read<AccountProvider>().deleteAccount(widget.account.id!)) {
+                    Navigator.pop(context);
+                  }
                 }
               }),
         )

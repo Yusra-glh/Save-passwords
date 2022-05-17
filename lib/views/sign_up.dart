@@ -126,7 +126,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin{
                                 ),
                               ),function: () async {
                                if(await provider.googleLogin(context)){
-                                 Navigator.pushReplacement(context,  MaterialPageRoute(builder: (BuildContext context) => const AddPassword()));
+                                 Navigator.pushReplacement(context,  MaterialPageRoute(builder: (BuildContext context) => const AddPassword(fromScreen: "login",)));
                                }else{
                                  
                                }

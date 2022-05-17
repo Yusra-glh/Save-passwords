@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:save_password/views/add_password.dart';
 import 'package:save_password/views/home_screen.dart';
 import 'package:save_password/views/sign_up.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,7 +10,8 @@ class Wrapper extends StatefulWidget {
 }
 
 class _WrapperState extends State<Wrapper> {
-   SharedPreferences? prefs;
+  SharedPreferences? prefs;
+
   @override
   void initState() {
     super.initState();
@@ -25,6 +27,7 @@ class _WrapperState extends State<Wrapper> {
     });
     print("prefs.getString()");
     print(prefs!.getString("token"));
+    
   }
 
   @override
@@ -37,7 +40,7 @@ class _WrapperState extends State<Wrapper> {
         : prefs != null &&
                 prefs!.getString("token") != null &&
                 prefs!.getString("token") != ""
-            ? HomeScreen()
-            : SignIn();
+            ? const AddPassword(fromScreen: "checkAuth",)
+            : const SignIn();
   }
 }

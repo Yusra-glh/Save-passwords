@@ -9,26 +9,26 @@ class Account {
   String? strengthValue;
   String? icon;
 
-  Account(
-      {
-        this.email,
-        this.id,
-        this.password,
-        this.title,
-        this.strength,
-        this.strengthValue,
-        this.icon,
-      });
+  Account({
+    this.email,
+    this.id,
+    this.password,
+    this.title,
+    this.strength,
+    this.strengthValue,
+    this.icon,
+  });
 
   Map<String, dynamic> toJson() => {
-    'email': email,
-    'id': id,
-    'password': password,
-    'title': title,
-    'strength': strength,
-    'strengthValue': strengthValue,
-    'icon': icon,
-  };
+        if (email != null) 'email': email,
+        if (id != null) 'id': id,
+        if (password != null) 'password': password,
+        if (title != null) 'title': title,
+        if (strength != null) 'strength': strength,
+        if (strengthValue != null) 'strengthValue': strengthValue,
+        if (icon != null) 'icon': icon,
+      };
 
-  factory Account.fromJson(Map<String, dynamic> json) => _$AccountFromJson(json);
+  factory Account.fromJson(Map<String, dynamic> json) =>
+      _$AccountFromJson(json);
 }

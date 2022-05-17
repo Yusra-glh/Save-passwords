@@ -8,10 +8,25 @@ import 'package:save_password/widgets/accounts_list.dart';
 
 import '../models/account.dart';
 import '../providers/auth_provider.dart';
-import '../widgets/primary_button.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late Future<List<Account>?> acounts;
+  @override
+  void initState() {
+    init();
+    super.initState();
+  }
+
+  init() {
+    acounts = context.read<AccountProvider>().getAccounts();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,14 +36,32 @@ class HomeScreen extends StatelessWidget {
     var provider = context.read<AccountProvider>();
     var Dprovider = context.watch<AccountProvider>();
     return FutureBuilder(
-        future: provider.getAccounts(),
-        builder: (BuildContext context, AsyncSnapshot<List<Account>> snapshot) {
+        future: acounts,
+        builder:
+            (BuildContext context, AsyncSnapshot<List<Account>?> snapshot) {
           return Scaffold(
               appBar: AppBar(
                 title: const Text("Save passwords"),
                 backgroundColor: AppStyle.primary,
                 actions: [
-                  IconButton(onPressed: () {}, icon: const Icon(Icons.menu))
+                  PopupMenuButton(
+                      icon: const Icon(Icons.menu),
+                      itemBuilder: (context) => [
+                            PopupMenuItem(
+                              onTap: () async {
+                                await context
+                                    .read<AuthProvider>()
+                                    .googleLogout();
+                              },
+                              child: Row(
+                                children: const [
+                                  Text("Logout"),
+                        
+                                ],
+                              ),
+                              value: 1,
+                            ),
+                          ]),
                 ],
               ),
               floatingActionButton: FloatingActionButton(
@@ -52,7 +85,11 @@ class HomeScreen extends StatelessWidget {
                             horizontal: wm * 1.8, vertical: hm * 3.5),
                         scrollDirection: Axis.vertical,
                         shrinkWrap: true,
-                        itemCount: snapshot.hasData ? snapshot.data!.length : 0,
+                        itemCount: Dprovider.accounts.isNotEmpty
+                            ? Dprovider.accounts.length
+                            : snapshot.hasData
+                                ? snapshot.data!.length
+                                : 0,
                         itemBuilder: (context, i) {
                           return Card(
                             elevation: 8.0,
@@ -62,7 +99,9 @@ class HomeScreen extends StatelessWidget {
                               decoration: const BoxDecoration(
                                   color: Color.fromRGBO(153, 153, 255, .4)),
                               child: AccountList(
-                                account: snapshot.data![i],
+                                account: Dprovider.accounts.isNotEmpty
+                                    ? Dprovider.accounts[i]
+                                    : snapshot.data![i],
                               ),
                             ),
                           );
@@ -70,15 +109,6 @@ class HomeScreen extends StatelessWidget {
                     SizedBox(
                       height: hm * 2,
                     ),
-                    Center(
-                        child: primaryButton(
-                            height: hm * 5.5,
-                            borderRadius: BorderRadius.circular(wm * 4),
-                            width: double.maxFinite,
-                            widget: const Text("Logout"),
-                            function: () async {
-                              await context.read<AuthProvider>().googleLogout();
-                            })),
                   ],
                 ),
               ));
